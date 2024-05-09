@@ -8,29 +8,29 @@
 int pathCount = 0;
 bool visited[MAX][MAX]; // Track visited cells
 
-bool isValid(int x, int y, int rows, int cols) {
+bool isValid(int x, int y, int rows, int cols) { // returns valid whenever to-be-tracked data is within grid
     return (x >= 0 && x < rows && y >= 0 && y < cols);
 }
 
 // DFS function to find all unique paths from start to end
 void dfs(char map[MAX][MAX], int x, int y, int endX, int endY, int rows, int cols) {
-    if (x == endX && y == endY) {
+    if (x == endX && y == endY) { // start reaches end point
         pathCount++;
         return;
     }
 
-    visited[x][y] = true;
+    visited[x][y] = true; 
 
     // Possible moves: Up, Down, Left, Right
     int dx[] = {-1, 1, 0, 0};
     int dy[] = {0, 0, -1, 1};
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) { 
         int newX = x + dx[i];
         int newY = y + dy[i];
 
         if (isValid(newX, newY, rows, cols) && !visited[newX][newY] && map[newX][newY] != '#') {
-            dfs(map, newX, newY, endX, endY, rows, cols);
+            dfs(map, newX, newY, endX, endY, rows, cols); 
         }
     }
 
@@ -44,7 +44,7 @@ int main() {
     scanf("%s", filename);
 
     FILE *stream = fopen(filename, "r");
-    if (stream == NULL) {
+    if (stream == NULL) { // file not found within directory (return error message and end program)
         printf("File not found!\n");
         return 1;
     }
@@ -57,7 +57,7 @@ int main() {
         row++; // save number of rows (lines)
         int cur = strlen(line);
         if (cur < col) {
-            col = cur; // to save the number of cols with no newline char
+            col = cur; // save the number of cols with no newline char
         }
     }
 
@@ -67,8 +67,8 @@ int main() {
     int track = 0;
 
     while (fgets(line, MAX, stream)) {
-        line[strcspn(line,"\n")] = '\0';
-        strncpy(map[track], line, col-1);
+        line[strcspn(line,"\n")] = '\0';  
+        strncpy(map[track], line, col-1); // remove newline char
         map[track][col-1] = '\0';
         track++;
     }
@@ -79,10 +79,10 @@ int main() {
     int startX = -1, startY = -1, endX = -1, endY = -1;
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {
-            if (map[i][j] == 'S') {
+            if (map[i][j] == 'S') { // initialize starting point
                 startX = i;
                 startY = j;
-            } else if (map[i][j] == 'E') {
+            } else if (map[i][j] == 'E') { // initialize end point
                 endX = i;
                 endY = j;
             }

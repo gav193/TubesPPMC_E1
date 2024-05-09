@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #define MAX 256
-
+// tes
 int pathCount = 0;
 bool visited[MAX][MAX]; // Track visited cells
 

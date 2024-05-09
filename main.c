@@ -31,7 +31,7 @@ int main() {
 
     rewind(stream);
 
-    char map[MAX][MAX];
+    char map[row][col];
     int track = 0;
 
     while (fgets(line, MAX, stream)) {

@@ -34,10 +34,9 @@ int main() {
     char map[row][col];
     int track = 0;
 
-    while (fgets(line, MAX, stream)) {
-        line[strcspn(line,"\n")] = '\0';  
-        strncpy(map[track], line, col-1); // remove newline char
-        map[track][col-1] = '\0';
+     while (fgets(line, MAX, stream)) {
+        line[strcspn(line, "\n")] = '\0';
+        strncpy(map[track], line, col);
         track++;
     }
     // parse into matrix of char complete

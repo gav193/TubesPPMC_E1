@@ -11,6 +11,7 @@ Terdapat sebuah labirin yang terdiri dari sel-sel. Tujuan dari proyek ini adalah
 6. Algoritma Backtracking
 7. Algoritma Greedy
 8. Algoritma Divide-and-Conquer
+
 Dari setiap algoritma yang dirancang, kompleksitas, waktu, dan efisiensinya akan dibandingkan dan dianalisis.
 
 Jenis File Input : File berformat .txt

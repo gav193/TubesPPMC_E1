@@ -91,7 +91,9 @@ int main() {
         }
 
         // Mark current position as part of the path
-        map2[curr.y][curr.x] = '+';
+        if (map2[curr.y][curr.x] == '.'){
+            map2[curr.y][curr.x] = '+';
+        }
 
         // Try moving in all four directions
         pos directions[4] = { {0, 1}, {1, 0}, {0, -1}, {-1, 0} };
@@ -113,12 +115,28 @@ int main() {
         for (int i = 0; i < sol_counter; i++) {
             printf("%d. (%d,%d)\n", i, sol[i].x, sol[i].y);
         }
+
+        // Print the maze with path
+
+        printf("\n");
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
-                printf("%c", map2[i][j]);
+                if (map2[i][j] == '#') {
+                    printf("█");
+                }else if (map2[i][j] == '.') {
+                    printf("░");
+                }else if (map2[i][j] == '+') {
+                    printf("+");
+                }
+                else{printf("%c", map2[i][j]);
+                }
+                if (j == col - 1) {
+                }
             }
-            printf("\n");
+            printf("\n");   
         }
+
+        printf("\n");
     } else {
         printf("Failed to solve the maze\n");
     }

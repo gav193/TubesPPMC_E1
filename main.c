@@ -8,38 +8,27 @@
 int main() {
     char filename[MAX];
     // input filename from user
-    printf("Enter file name : ");
+    printf("Enter file name: ");
     scanf("%s", filename);
 
     FILE *stream = fopen(filename, "r");
-    if (stream == NULL) { // file not found within directory (return error message and end program)
+    if (stream == NULL) {
         printf("File not found!\n");
         return 1;
     }
 
     int row = 0;
-    int col = MAX;
-    char line[MAX]; // assumption: no lines have varying lengths
-    while (fgets(line, MAX, stream)) {
-        printf("%s \n", line);
-        row++; // save number of rows (lines)
-        int cur = strlen(line);
-        if (cur < col) {
-            col = cur; // save the number of cols with no newline char
-        }
+    int col = 0;
+    char line[MAX];
+    char map[MAX][MAX];
+
+    while (fgets(line, sizeof(line), stream)) {
+        line[strcspn(line, "\n")] = '\0'; // Remove newline character
+        strcpy(map[row], line);
+        row++;
+        col = strlen(line); // Assuming all rows are of same length
     }
 
-    rewind(stream);
-
-    char map[row][col];
-    int track = 0;
-
-     while (fgets(line, MAX, stream)) {
-        line[strcspn(line, "\n")] = '\0';
-        strncpy(map[track], line, col);
-        track++;
-    }
-    // parse into matrix of char complete
     fclose(stream);
 
     return 0;

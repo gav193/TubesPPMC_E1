@@ -1,155 +1,127 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
-#define MAX 256
+#define MAX_ROWS 100
+#define MAX_COLS 100
 
-typedef struct path
-{
-    int x;
-    int y;
-    struct path *next;
-    struct path *neigh;
-}path;
+typedef struct {
+    int x, y;
+} Point;
 
-void insertnextpath(path *prev_node, path *new_data)
-{
-    path *new_node = (path *)malloc(sizeof(path));
-    new_node->x = new_data->x;
-    new_node->y = new_data->y;
-    new_node->neigh = NULL;
-    new_node->next = prev_node->next;
-    prev_node->next = new_node;
+typedef struct Node {
+    Point point;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* front;
+    Node* rear;
+} Queue;
+
+// Initialize the queue
+void initQueue(Queue *q) {
+    q->front = NULL;
+    q->rear = NULL;
 }
 
-void insertnextneigh(path *prev_node, path *new_data)
-{
-    path *new_node = (path *)malloc(sizeof(path));
-    new_node->x = new_data->x;
-    new_node->y = new_data->y;
-    new_node->next = NULL;
-    new_node->neigh = prev_node->neigh;
-    prev_node->neigh = new_node;
+// Check if the queue is empty
+int isEmpty(Queue *q) {
+    return q->front == NULL;
 }
 
-void print_path(path *start)
-{
-    path *curr = start;
-    int i = 0;
-    while (curr != NULL)
-    {
-        i++;
-        printf("path %d: (%d, %d) ", i, curr->x, curr->y);
-        if(curr->neigh != NULL)
-        {
-            print_path(curr);
-        }
-        curr = curr->next;
+// Add an element to the queue
+void enqueue(Queue *q, Point p) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed.\n");
+        exit(1);
     }
+    newNode->point = p;
+    newNode->next = NULL;
+    if (isEmpty(q)) {
+        q->front = newNode;
+        q->rear = newNode;
+    } else {
+        q->rear->next = newNode;
+        q->rear = newNode;
+    }
+}
+
+// Remove and return the front element from the queue
+Point dequeue(Queue *q) {
+    if (isEmpty(q)) {
+        printf("Queue is empty.\n");
+        exit(1);
+    }
+    Node* temp = q->front;
+    Point p = temp->point;
+    q->front = q->front->next;
+    free(temp);
+    if (q->front == NULL) {
+        q->rear = NULL;
+    }
+    return p;
+}
+
+// Check if a move is valid
+int isValidMove(int x, int y, int rows, int cols, char maze[][MAX_COLS], int visited[][MAX_COLS]) {
+    return (x >= 0 && x < rows && y >= 0 && y < cols && (maze[x][y] == '.'|| maze[x][y] == 'E') && !visited[x][y]);
+}
+
+// Print the shortest path
+void printShortestPath(Point start, Point end, Point parent[][MAX_COLS]) {
+    Point path[MAX_ROWS * MAX_COLS];
+    int pathLength = 0;
+    Point current = end;
+    while (!(current.x == start.x && current.y == start.y)) {
+        path[pathLength++] = current;
+        current = parent[current.x][current.y];
+    }
+    path[pathLength++] = start;
+    printf("Shortest path: ");
+    for (int i = pathLength - 1; i > 0; i--) {
+        printf("(%d, %d) -> ", path[i].x, path[i].y);
+    }
+    printf("(%d, %d)", path[0].x, path[0].y);
     printf("\n");
 }
 
-void bfs(int startX, int startY, char map[][MAX], int row, int col)
-{
-    path *jalan = (path *)malloc(sizeof(path));
-    jalan->x = startX;
-    jalan->y = startY;
-    jalan->next = NULL;
-    jalan->neigh = NULL;
-    
-    path *jalan2 = (path *)malloc(sizeof(path));
+// Breadth-first search algorithm to find the shortest path
+void bfs(Point start, Point end, int rows, int cols, char maze[][MAX_COLS]) {
+    int visited[MAX_ROWS][MAX_COLS] = {0}; // Initialize visited array to keep track of visited cells
+    Point parent[MAX_ROWS][MAX_COLS]; // Array to store parent of each cell
+    Queue q;
+    initQueue(&q);
+    enqueue(&q, start);
+    visited[start.x][start.y] = 1;
+    parent[start.x][start.y] = start;
+    int dx[] = {-1, 1, 0, 0}; // Possible moves: up, down, left, right
+    int dy[] = {0, 0, -1, 1};
 
-    while (jalan != NULL){   
-        int count = 0;
-        int r = jalan->x;
-        int c = jalan->y;
-
-        if (r == row - 1 && c == col - 1){
-            // Jika sudah mencapai akhir, cetak jalannya
-            printf("Jalur terpendek:\n");
-            print_path(jalan);
-            break;
+    while (!isEmpty(&q)) {
+        Point current = dequeue(&q);
+        if (current.x == end.x && current.y == end.y) {
+            printShortestPath(start, end, parent);
+            return;
         }
+        for (int i = 0; i < 4; i++) {
+            int newX = current.x + dx[i];
+            int newY = current.y + dy[i];
 
-        // Cek arah kanan
-        if (c + 1 < col && map[r][c + 1] == '.'){   
-            
-            jalan2->x = r;
-            jalan2->y = c + 1;
-            jalan2->next = NULL;
-            jalan2->neigh = NULL;
-            insertnextpath(jalan, jalan2);
-            count += 1;
-        }
-
-        // Cek arah bawah
-        if (r + 1 < row && map[r + 1][c] == '.'){   
-            jalan2->x = r + 1;
-            jalan2->y = c;
-            jalan2->next = NULL;
-            jalan2->neigh = NULL;
-
-            if(count == 0)
-            {
-                insertnextpath(jalan, jalan2);
-                jalan = jalan->next;
-                count += 1;
-            }
-            else
-            {
-                insertnextneigh(jalan, jalan2);
-                bfs((r+1),c,map,row,col);
+            if (isValidMove(newX, newY, rows, cols, maze, visited)) {
+                enqueue(&q, (Point){newX, newY});
+                visited[newX][newY] = 1;
+                parent[newX][newY] = current;
             }
         }
-
-        // Cek arah kiri
-        if (c - 1 >= 0 && map[r][c - 1] == '.'){   
-            jalan2->x = r;
-            jalan2->y = c - 1;
-            jalan2->next = NULL;
-            jalan2->neigh = NULL;
-
-            if(count == 0)
-            {
-                insertnextpath(jalan, jalan2);
-                jalan = jalan->next;
-                count += 1;
-            }
-            else
-            {
-                insertnextneigh(jalan, jalan2);
-                bfs((r+1),c,map,row,col);
-            }
-        }
-
-        // Cek arah atas
-        if (r - 1 >= 0 && map[r - 1][c] == '.')
-        {   
-            jalan2->x = r - 1;
-            jalan2->y = c;
-            jalan2->next = NULL;
-            jalan2->neigh = NULL;
-
-            if(count == 0)
-            {
-                insertnextpath(jalan, jalan2);
-                jalan = jalan->next;
-                count += 1;
-            }
-            else
-            {
-                insertnextneigh(jalan, jalan2);
-                bfs((r+1),c,map,row,col);
-            }
-        }
-        jalan = jalan->next;
     }
+    printf("No path found.\n");
 }
 
-int main()
-{
-    char filename[MAX];
-    // input filename from user
+int main() {
+    char filename[MAX_COLS];
     printf("Enter file name: ");
     scanf("%s", filename);
 
@@ -161,36 +133,39 @@ int main()
 
     int row = 0;
     int col = 0;
-    char line[MAX];
-    char map[MAX][MAX];
+    char line[100];
+    char maze[100][100];
 
-    while (fgets(line, sizeof(line), stream)) {
-        line[strcspn(line, "\n")] = '\0'; // Remove newline character
-        strcpy(map[row], line);
+    while (fgets(line, sizeof(line), stream))
+    {
+        line[strcspn(line, "\n")] = '\0';
+        strcpy(maze[row], line);
         row++;
-        col = strlen(line); // Assuming all rows are of same length
+        col = strlen(line);
     }
 
     fclose(stream);
 
-    int awal[2], akhir[2];
-    for (int i = 0; i < row; i++)
-    {
-        for (int j = 0; j < col; j++)
-        {
-            if (map[i][j] == 'S')
-            {
-                awal[0] = i;
-                awal[1] = j;
-            } else if (map[i][j] == 'E')
-            {
-                akhir[0] = i;
-                akhir[1] = j;
+    Point start, end;
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            if (maze[i][j] == 'S') {
+                start.x = i;
+                start.y = j;
+            } else if (maze[i][j] == 'E') {
+                end.x = i;
+                end.y = j;
             }
         }
     }
-    int startX = awal[0];
-    int startY = awal[1];
-    bfs(startX, startY, map, akhir[0], akhir[1]);
+    clock_t startclk, endclk;
+    double cpu_time_used;
+
+    startclk = clock();
+    bfs(start, end, row, col, maze);
+    endclk = clock();
+    cpu_time_used = ((double) (endclk - startclk)) / CLOCKS_PER_SEC;
+    printf("Waktu yang diperlukan: %f",cpu_time_used);
+
     return 0;
 }

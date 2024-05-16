@@ -39,7 +39,7 @@ void print_path(path *start)
     while (curr != NULL)
     {
         i++;
-        printf("%d (%d, %d) ", i, curr->x, curr->y);
+        printf("path %d: (%d, %d) ", i, curr->x, curr->y);
         if(curr->neigh != NULL)
         {
             print_path(curr);
@@ -49,7 +49,8 @@ void print_path(path *start)
     printf("\n");
 }
 
-void bfs(int startX, int startY, char map[][MAX], int row, int col){
+void bfs(int startX, int startY, char map[][MAX], int row, int col)
+{
     path *jalan = (path *)malloc(sizeof(path));
     jalan->x = startX;
     jalan->y = startY;
@@ -59,6 +60,7 @@ void bfs(int startX, int startY, char map[][MAX], int row, int col){
     path *jalan2 = (path *)malloc(sizeof(path));
 
     while (jalan != NULL){   
+        int count = 0;
         int r = jalan->x;
         int c = jalan->y;
 
@@ -76,9 +78,8 @@ void bfs(int startX, int startY, char map[][MAX], int row, int col){
             jalan2->y = c + 1;
             jalan2->next = NULL;
             jalan2->neigh = NULL;
-            insertnextneigh(jalan, jalan2);
-            jalan = jalan->neigh;
-            bfs(r,c+1,map,row,col);
+            insertnextpath(jalan, jalan2);
+            count += 1;
         }
 
         // Cek arah bawah
@@ -87,9 +88,18 @@ void bfs(int startX, int startY, char map[][MAX], int row, int col){
             jalan2->y = c;
             jalan2->next = NULL;
             jalan2->neigh = NULL;
-            insertnextpath(jalan, jalan2);
-            jalan = jalan->next;
-            bfs(r,c+1,map,row,col);
+
+            if(count == 0)
+            {
+                insertnextpath(jalan, jalan2);
+                jalan = jalan->next;
+                count += 1;
+            }
+            else
+            {
+                insertnextneigh(jalan, jalan2);
+                bfs((r+1),c,map,row,col);
+            }
         }
 
         // Cek arah kiri
@@ -98,21 +108,41 @@ void bfs(int startX, int startY, char map[][MAX], int row, int col){
             jalan2->y = c - 1;
             jalan2->next = NULL;
             jalan2->neigh = NULL;
-            insertnextneigh(jalan, jalan2);
-            jalan = jalan->neigh;
-            bfs(r,c+1,map,row,col);
+
+            if(count == 0)
+            {
+                insertnextpath(jalan, jalan2);
+                jalan = jalan->next;
+                count += 1;
+            }
+            else
+            {
+                insertnextneigh(jalan, jalan2);
+                bfs((r+1),c,map,row,col);
+            }
         }
 
         // Cek arah atas
-        if (r - 1 >= 0 && map[r - 1][c] == '.'){   
+        if (r - 1 >= 0 && map[r - 1][c] == '.')
+        {   
             jalan2->x = r - 1;
             jalan2->y = c;
             jalan2->next = NULL;
             jalan2->neigh = NULL;
-            insertnextpath(jalan, jalan2);
-            jalan = jalan->next;
-            bfs(r,c+1,map,row,col);
+
+            if(count == 0)
+            {
+                insertnextpath(jalan, jalan2);
+                jalan = jalan->next;
+                count += 1;
+            }
+            else
+            {
+                insertnextneigh(jalan, jalan2);
+                bfs((r+1),c,map,row,col);
+            }
         }
+        jalan = jalan->next;
     }
 }
 

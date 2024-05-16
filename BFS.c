@@ -1,23 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h> // For INT_MAX
 
 #define MAX 256
 
-// Define the path structure
 typedef struct path
 {
     int x;
     int y;
     struct path *next;
     struct path *neigh;
-} Path;
+}path;
 
-// Function to insert a new cell into the path list
-void insertnextpath(Path *prev_node, Path *new_data)
+void insertnextpath(path *prev_node, path *new_data)
 {
-    Path *new_node = (Path *)malloc(sizeof(Path));
+    path *new_node = (path *)malloc(sizeof(path));
     new_node->x = new_data->x;
     new_node->y = new_data->y;
     new_node->neigh = NULL;
@@ -25,10 +22,9 @@ void insertnextpath(Path *prev_node, Path *new_data)
     prev_node->next = new_node;
 }
 
-// Function to insert a new cell into the neighboring list
-void insertnextneigh(Path *prev_node, Path *new_data)
+void insertnextneigh(path *prev_node, path *new_data)
 {
-    Path *new_node = (Path *)malloc(sizeof(Path));
+    path *new_node = (path *)malloc(sizeof(path));
     new_node->x = new_data->x;
     new_node->y = new_data->y;
     new_node->next = NULL;
@@ -36,64 +32,43 @@ void insertnextneigh(Path *prev_node, Path *new_data)
     prev_node->neigh = new_node;
 }
 
-// Function to print the path
-void print_path(Path *start)
+void print_path(path *start)
 {
-    Path *curr = start;
+    path *curr = start;
+    int i = 0;
     while (curr != NULL)
     {
-        printf("(%d, %d) -> ", curr->x, curr->y);
+        i++;
+        printf("%d (%d, %d) ", i, curr->x, curr->y);
+        if(curr->neigh != NULL)
+        {
+            print_path(curr);
+        }
         curr = curr->next;
     }
     printf("\n");
 }
 
-// Function to find paths using BFS
-void find_paths(int startX, int startY, char map[][MAX], int row, int col)
-{
-    Path *jalan = (Path *)malloc(sizeof(Path));
+void bfs(int startX, int startY, char map[][MAX], int row, int col){
+    path *jalan = (path *)malloc(sizeof(path));
     jalan->x = startX;
     jalan->y = startY;
     jalan->next = NULL;
     jalan->neigh = NULL;
-    struct path *jalan2 = (struct path *)malloc(sizeof(struct path));
+    
+    path *jalan2 = (path *)malloc(sizeof(path));
 
-    // Initialize variables for longest and shortest paths
-    int longest_length = 0;
-    int shortest_length = INT_MAX;
-    Path *longest_path = NULL;
-    Path *shortest_path = NULL;
-
-    while (jalan != NULL)
-    {
+    while (jalan != NULL){   
         int r = jalan->x;
         int c = jalan->y;
 
-        if (r == row - 1 && c == col - 1)
-        {
-            // Found a path
-            int path_length = 0;
-            Path *temp = jalan;
-            while (temp != NULL)
-            {
-                path_length++;
-                temp = temp->next;
-            }
-
-            // Update longest and shortest paths
-            if (path_length > longest_length)
-            {
-                longest_length = path_length;
-                longest_path = jalan;
-            }
-            if (path_length < shortest_length)
-            {
-                shortest_length = path_length;
-                shortest_path = jalan;
-            }
+        if (r == row - 1 && c == col - 1){
+            // Jika sudah mencapai akhir, cetak jalannya
+            printf("Jalur terpendek:\n");
+            print_path(jalan);
+            break;
         }
 
-        // Check neighboring cells and add them to the lists
         // Cek arah kanan
         if (c + 1 < col && map[r][c + 1] == '.'){   
             
@@ -103,6 +78,7 @@ void find_paths(int startX, int startY, char map[][MAX], int row, int col)
             jalan2->neigh = NULL;
             insertnextneigh(jalan, jalan2);
             jalan = jalan->neigh;
+            bfs(r,c+1,map,row,col);
         }
 
         // Cek arah bawah
@@ -113,6 +89,7 @@ void find_paths(int startX, int startY, char map[][MAX], int row, int col)
             jalan2->neigh = NULL;
             insertnextpath(jalan, jalan2);
             jalan = jalan->next;
+            bfs(r,c+1,map,row,col);
         }
 
         // Cek arah kiri
@@ -123,6 +100,7 @@ void find_paths(int startX, int startY, char map[][MAX], int row, int col)
             jalan2->neigh = NULL;
             insertnextneigh(jalan, jalan2);
             jalan = jalan->neigh;
+            bfs(r,c+1,map,row,col);
         }
 
         // Cek arah atas
@@ -133,34 +111,9 @@ void find_paths(int startX, int startY, char map[][MAX], int row, int col)
             jalan2->neigh = NULL;
             insertnextpath(jalan, jalan2);
             jalan = jalan->next;
+            bfs(r,c+1,map,row,col);
         }
-
-        // Move to the next node
-        jalan = jalan->next;
     }
-
-    // Print all paths
-    printf("All possible paths from start to end:\n");
-    int path_number = 1;
-    Path *curr = jalan;
-    while (curr != NULL)
-    {
-        printf("Path %d: ", path_number);
-        print_path(curr);
-        path_number++;
-        curr = curr->neigh;
-    }
-
-    // Print total number of paths
-    printf("Total number of paths: %d\n", path_number - 1);
-
-    // Print longest path
-    printf("Longest path from start to end:\n");
-    print_path(longest_path);
-
-    // Print shortest path
-    printf("Shortest path from start to end:\n");
-    print_path(shortest_path);
 }
 
 int main()
@@ -206,7 +159,8 @@ int main()
             }
         }
     }
-
-    find_paths(awal[0], awal[1], map, akhir[0], akhir[1]);
+    int startX = awal[0];
+    int startY = awal[1];
+    bfs(startX, startY, map, akhir[0], akhir[1]);
     return 0;
 }

@@ -18,15 +18,21 @@ int main() {
     }
 
     int row = 0;
-    int col = 0;
     char line[MAX];
     char map[MAX][MAX];
+
+    fgets(line, sizeof(line), stream);
+    int col = strlen(line) -1; // initialize column value as line length (-1 because of newline char)
+    rewind(stream);
 
     while (fgets(line, sizeof(line), stream)) {
         line[strcspn(line, "\n")] = '\0'; // Remove newline character
         strcpy(map[row], line);
         row++;
-        col = strlen(line); // Assuming all rows are of same length
+        if (col != strlen(line)) {
+            printf("Found uneven row of line at %d\n, row);
+            exit(1);
+        }
     }
 
     fclose(stream);

@@ -45,7 +45,7 @@ void findShortestPaths(int startX, int startY, int endX, int endY, int rows, int
                 if (maze[x][y] != '#') { // Skip obstacles
                     int minNeighbor = shortestPathLengths[x][y].length;
                     int prevX = -1, prevY = -1;
-                    // Check 4 directions beside one point
+                    // Consider all four neighbors
                     if (isValid(x - 1, y, rows, cols) && shortestPathLengths[x - 1][y].length + 1 < minNeighbor) { // Up
                         minNeighbor = shortestPathLengths[x - 1][y].length + 1;
                         prevX = x - 1;
@@ -89,7 +89,7 @@ void printShortestPath(int endX, int endY, int startX, int startY) {
     }
     printf("Shortest path length from 'S' to 'E': %d\n", shortestPathLengths[endX][endY].length);
 
-    int path[MAX][2]; // To store the path coordinates (x,y)
+    int path[MAX][2]; // To store the path coordinates
     int length = 0;
     int x = endX, y = endY;
     while (x != -1 && y != -1) {
@@ -165,7 +165,7 @@ int main() {
         return 1;
     }
 
-    printf("Start position: (%d, %d)\n", startX, startY);
+    printf("Start position: (%d, %d)\n", startY, startX);
 
     if (startX != -1) {
         clock_t startclk, endclk;

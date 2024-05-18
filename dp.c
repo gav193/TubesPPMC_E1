@@ -5,7 +5,7 @@
 #include <time.h>
 
 #define MAX 256
-#define MAX_PATHS 100
+#define MAX_PATHS 10000
 #define MAX_PATH_LENGTH 100
 #define INF 10000 // A large value to represent infinity
 
@@ -113,8 +113,6 @@ int main() {
 
         startclk = clock();
         findPaths(startX, startY, row, col, currentPath, 0);
-        endclk = clock();
-        cpu_time_used = ((double) (endclk - startclk)) / CLOCKS_PER_SEC;
 
         // Print all paths and length
         printf("Total number of paths from 'S' to 'E': %d\n", pathCount);
@@ -209,6 +207,8 @@ int main() {
                 printf("\n");
             }
         }
+        endclk = clock();
+        cpu_time_used = ((double) (endclk - startclk)) / CLOCKS_PER_SEC;
         printf("Waktu yang diperlukan: %f",cpu_time_used);
     } else {
         printf("Start 'S' position not found.\n");

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <time.h>
 
 bool visited[100][100];
 char direction[] = "UDLR";
@@ -96,12 +97,61 @@ void findPath(Maze* maze) {
         }
     }
     printf("Total number of unique paths from 'S' to 'E': %d\n", count);
+    int minlen = 999999;
+    int maxlen = 0;
+    int idmin = -1;
+    int idmax = -1;
+    for (int i = 0; i < count; i++) {
+        if (strlen(ans[i]) > maxlen) {
+            maxlen = strlen(ans[i]);
+            idmax = i;
+        }
+        if (strlen(ans[i]) < minlen) {
+            minlen = strlen(ans[i]);
+            idmin = i;
+        }
+    }
+    printf("Shortest path distance: %d\n", minlen);
+    printf("Path : (%d, %d)", maze->start.col, maze->start.row);
+    int tempx = maze->start.row;
+    int tempy = maze->start.col;
+    for(int i = 0; i < minlen; i++) {
+        if (ans[idmin][i] == 'D') {
+            tempx++;
+        } else if (ans[idmin][i] == 'U') {
+            tempx--;
+        } else if (ans[idmin][i] == 'R') {
+            tempy++;
+        } else if (ans[idmin][i] == 'L') {
+            tempy--;
+        }
+        printf(" -> (%d,%d)", tempx, tempy);
+    }
+    printf("\n");
+    printf("Longest path distance: %d\n", maxlen);
+    printf("Path : (%d, %d)", maze->start.col, maze->start.row);
+    tempx = maze->start.row;
+    tempy = maze->start.col;
+    for(int i = 0; i < maxlen; i++) {
+        if (ans[idmax][i] == 'D') {
+            tempx++;
+        } else if (ans[idmax][i] == 'U') {
+            tempx--;
+        } else if (ans[idmax][i] == 'R') {
+            tempy++;
+        } else if (ans[idmax][i] == 'L') {
+            tempy--;
+        }
+        printf(" -> (%d,%d)", tempx, tempy);
+    }
+    printf("\n");
 }
-
 int main() {
     Maze maze;
-    FILE* file = fopen("maze.txt", "r");
+    FILE* file = fopen("Maze.txt", "r");
     char line[1024];
+    clock_t startclk, endclk;
+    double cpu_time_used;
 
     if (file == NULL) {
         printf("File maze.txt tidak ditemukan\n");
@@ -159,9 +209,11 @@ int main() {
     printf("Maze layout:\n");
     display_maze(&maze);
     printf("\nStarting path finding...\n");
-
+    startclk = clock();
     findPath(&maze);
-
+    endclk = clock();
+    cpu_time_used = ((double) (endclk - startclk)) / CLOCKS_PER_SEC;
+    printf("Waktu yang diperlukan: %f",cpu_time_used);
     for (int i = 0; i < maze.rows; i++) {
         free(maze.cells[i]);
     }

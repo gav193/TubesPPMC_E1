@@ -111,7 +111,7 @@ void printShortestPath(Maze *maze) {
 
     printf("Path: ");
     for (int i = pathLength - 1; i >= 0; i--) {
-        printf("(%d, %d)", path[i].x, path[i].y);
+        printf("(%d, %d)", path[i].y, path[i].x);
         if (i > 0) {
             printf(" -> ");
         }

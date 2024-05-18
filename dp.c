@@ -21,7 +21,7 @@ bool isValid(int x, int y, int rows, int cols) {
 }
 
 // Function to find all paths from (x, y) to 'E' and their lengths
-void findPaths(int x, int y, int rows, int cols, char currentPath[], int step) {
+void findPaths(int x, int y, int rows, int cols, char currentPath[], int step, bool* found) {
     // Base case
     if (!isValid(x, y, rows, cols) || maze[x][y] == '#' || visited[x][y]) {
         return; // Return for invalid cells, obstacles, or already visited cells
@@ -30,6 +30,7 @@ void findPaths(int x, int y, int rows, int cols, char currentPath[], int step) {
         currentPath[step] = '\0'; // Null terminate the path
         strcpy(foundPaths[pathCount], currentPath); // Store the path
         pathCount++; // Increment path count
+        *found = true; // Set found flag to true
         return;
     }
 
@@ -38,13 +39,13 @@ void findPaths(int x, int y, int rows, int cols, char currentPath[], int step) {
 
     // Explore adjacent cells
     currentPath[step] = 'D';
-    findPaths(x + 1, y, rows, cols, currentPath, step + 1);
+    findPaths(x + 1, y, rows, cols, currentPath, step + 1, found);
     currentPath[step] = 'U';
-    findPaths(x - 1, y, rows, cols, currentPath, step + 1);
+    findPaths(x - 1, y, rows, cols, currentPath, step + 1, found);
     currentPath[step] = 'R';
-    findPaths(x, y + 1, rows, cols, currentPath, step + 1);
+    findPaths(x, y + 1, rows, cols, currentPath, step + 1, found);
     currentPath[step] = 'L';
-    findPaths(x, y - 1, rows, cols, currentPath, step + 1);
+    findPaths(x, y - 1, rows, cols, currentPath, step + 1, found);
 
     // Unmark current cell
     visited[x][y] = false; // Restore the original character
@@ -112,7 +113,13 @@ int main() {
         double cpu_time_used;
 
         startclk = clock();
-        findPaths(startX, startY, row, col, currentPath, 0);
+        bool found = false; // Initialize found flag
+        findPaths(startX, startY, row, col, currentPath, 0, &found);
+
+        if (!found) {
+            printf("No path found from 'S' to 'E'.\n");
+            return 0; // Exit if no path is found
+        }
 
         // Print all paths and length
         printf("Total number of paths from 'S' to 'E': %d\n", pathCount);

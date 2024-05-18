@@ -216,8 +216,9 @@ void solveMaze(char maze[MAX][MAX], int rows, int cols, Pos start, Pos end) {
 
     // Print the shortest path
     printf("Shortest Path:\n");
-    for (int i = 0; i < pathLength; i++) {
-        printf("(%d, %d) ", path[i].x, path[i].y);
+    printf("(%d, %d)", path[0].y, path[0].x);
+    for (int i = 1; i < pathLength; i++) {
+        printf(" -> (%d, %d)", path[i].y, path[i].x);
     }
     printf("\nDistance: %d", pathLength);
     printf("\n");

@@ -3,57 +3,115 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
+#include <math.h>
 
 #define MAX 256
-#define MAX_PATHS 10000
-#define MAX_PATH_LENGTH 100
-#define INF 10000 // A large value to represent infinity
+#define INF 999
 
 char maze[MAX][MAX];
-char foundPaths[MAX_PATHS][MAX_PATH_LENGTH]; // To store paths
-int pathCount = 0; // To count paths
 
-bool visited[MAX][MAX];
+typedef struct {
+    int length;
+    int prevX, prevY;
+} Cell;
+
+Cell shortestPathLengths[MAX][MAX];
 
 // Function to check if a cell is within the bounds of the maze
 bool isValid(int x, int y, int rows, int cols) {
     return (x >= 0 && x < rows && y >= 0 && y < cols);
 }
 
-// Function to find all paths from (x, y) to 'E' and their lengths
-void findPaths(int x, int y, int rows, int cols, char currentPath[], int step, bool* found) {
-    // Base case
-    if (!isValid(x, y, rows, cols) || maze[x][y] == '#' || visited[x][y]) {
-        return; // Return for invalid cells, obstacles, or already visited cells
+void findShortestPaths(int startX, int startY, int endX, int endY, int rows, int cols) {
+    // Initialize shortest path lengths table
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            shortestPathLengths[i][j].length = INF;
+            shortestPathLengths[i][j].prevX = -1;
+            shortestPathLengths[i][j].prevY = -1;
+        }
     }
-    if (maze[x][y] == 'E') {
-        currentPath[step] = '\0'; // Null terminate the path
-        strcpy(foundPaths[pathCount], currentPath); // Store the path
-        pathCount++; // Increment path count
-        *found = true; // Set found flag to true
+    shortestPathLengths[startX][startY].length = 0; // Set shortest path length to start cell as 0
+
+    // Flag to track if any updates were made in the previous iteration
+    bool updated = true;
+
+    // Dynamic programming to find shortest path lengths
+    while (updated) {
+        updated = false; // Reset the flag for each iteration
+        // Traverse each cell in the maze
+        for (int x = 0; x < rows; x++) {
+            for (int y = 0; y < cols; y++) {
+                if (maze[x][y] != '#') { // Skip obstacles
+                    int minNeighbor = shortestPathLengths[x][y].length;
+                    int prevX = -1, prevY = -1;
+                    // Consider all four neighbors
+                    if (isValid(x - 1, y, rows, cols) && shortestPathLengths[x - 1][y].length + 1 < minNeighbor) { // Up
+                        minNeighbor = shortestPathLengths[x - 1][y].length + 1;
+                        prevX = x - 1;
+                        prevY = y;
+                    }
+                    if (isValid(x + 1, y, rows, cols) && shortestPathLengths[x + 1][y].length + 1 < minNeighbor) { // Down
+                        minNeighbor = shortestPathLengths[x + 1][y].length + 1;
+                        prevX = x + 1;
+                        prevY = y;
+                    }
+                    if (isValid(x, y - 1, rows, cols) && shortestPathLengths[x][y - 1].length + 1 < minNeighbor) { // Left
+                        minNeighbor = shortestPathLengths[x][y - 1].length + 1;
+                        prevX = x;
+                        prevY = y - 1;
+                    }
+                    if (isValid(x, y + 1, rows, cols) && shortestPathLengths[x][y + 1].length + 1 < minNeighbor) { // Right
+                        minNeighbor = shortestPathLengths[x][y + 1].length + 1;
+                        prevX = x;
+                        prevY = y + 1;
+                    }
+                    // Update shortest path length if a shorter path is found
+                    if (minNeighbor < shortestPathLengths[x][y].length) {
+                        shortestPathLengths[x][y].length = minNeighbor;
+                        shortestPathLengths[x][y].prevX = prevX;
+                        shortestPathLengths[x][y].prevY = prevY;
+                        updated = true; // Set flag to indicate an update was made
+                        if (x == endX && y == endY) {
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+void printShortestPath(int endX, int endY, int startX, int startY) {
+    if (shortestPathLengths[endX][endY].length == INF) {
+        printf("No path found from 'S' to 'E'.\n");
         return;
     }
+    printf("Shortest path length from 'S' to 'E': %d\n", shortestPathLengths[endX][endY].length);
 
-    // Mark current cell as visited
-    visited[x][y] = true;
+    int path[MAX][2]; // To store the path coordinates
+    int length = 0;
+    int x = endX, y = endY;
+    while (x != -1 && y != -1) {
+        path[length][0] = x;
+        path[length][1] = y;
+        int prevX = shortestPathLengths[x][y].prevX;
+        int prevY = shortestPathLengths[x][y].prevY;
+        x = prevX;
+        y = prevY;
+        length++;
+    }
 
-    // Explore adjacent cells
-    currentPath[step] = 'D';
-    findPaths(x + 1, y, rows, cols, currentPath, step + 1, found);
-    currentPath[step] = 'U';
-    findPaths(x - 1, y, rows, cols, currentPath, step + 1, found);
-    currentPath[step] = 'R';
-    findPaths(x, y + 1, rows, cols, currentPath, step + 1, found);
-    currentPath[step] = 'L';
-    findPaths(x, y - 1, rows, cols, currentPath, step + 1, found);
-
-    // Unmark current cell
-    visited[x][y] = false; // Restore the original character
+    printf("Path : \n (%d, %d)", startY,startX);
+    for (int i = length - 2; i >= 0; i--) {
+        printf(" -> (%d, %d)", path[i][1], path[i][0]);
+    }
+    printf("\n");
 }
 
 int main() {
-    char filename[MAX];
     // Input filename from user
+    char filename[MAX];
     printf("Enter file name: ");
     scanf("%s", filename);
 
@@ -65,10 +123,9 @@ int main() {
 
     int row = 0;
     char line[MAX];
-    char map[MAX][MAX];
 
     fgets(line, sizeof(line), stream);
-    int col = strlen(line) -1 ; // initialize column value and delete newline char
+    int col = strlen(line) - 1; // initialize column value and delete newline char
     rewind(stream);
 
     while (fgets(line, sizeof(line), stream)) {
@@ -82,141 +139,59 @@ int main() {
     }
     fclose(stream);
 
-    // Print maze for debugging
     printf("Maze contents:\n");
     for (int i = 0; i < row; i++) {
         printf("%s\n", maze[i]);
     }
 
-    // Initialize visited table with false
-    memset(visited, false, sizeof(visited));
-
-    // Find the 'S' position
+    // Find the 'S' and 'E' position
     int startX = -1, startY = -1;
+    int endX = -1, endY = -1;
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {
             if (maze[i][j] == 'S') {
                 startX = i;
                 startY = j;
-                break;
             }
-        }  
+            if (maze[i][j] == 'E') {
+                endX = i;
+                endY = j;
+            }
+        }
+    }
+
+    if (endX == -1 || endY == -1) {
+        printf("End point 'E' not found.\n");
+        return 1;
     }
 
     printf("Start position: (%d, %d)\n", startX, startY);
 
     if (startX != -1) {
-        char currentPath[MAX_PATH_LENGTH] = {0};
-        int shortestPathLength = INF;
-        int longestPathLength = 0;
         clock_t startclk, endclk;
         double cpu_time_used;
-
         startclk = clock();
-        bool found = false; // Initialize found flag
-        findPaths(startX, startY, row, col, currentPath, 0, &found);
-
-        if (!found) {
-            printf("No path found from 'S' to 'E'.\n");
-            return 0; // Exit if no path is found
-        }
-
-        // Print all paths and length
-        printf("Total number of paths from 'S' to 'E': %d\n", pathCount);
-        printf("Paths:\n");
-        for (int i = 0; i < pathCount; i++) {
-            int tempx = startX;
-            int tempy = startY;
-            printf("Path %d: (%d, %d)", i + 1, startX, startY);
-            for (int j = 0; j < strlen(foundPaths[i]); j++) {
-                switch(foundPaths[i][j]) {
-                    case 'D' :
-                        tempx++;
-                        break;
-                    case 'U' :
-                        tempx--;
-                        break;
-                    case 'L' :
-                        tempy--;
-                        break;
-                    case 'R' :
-                        tempy++;
-                        break;
-                }
-                printf("-> (%d, %d) ", tempx, tempy);
-            }
-            printf("\nLength: %lu\n", strlen(foundPaths[i]));
-        }
-
-        // Determine the shortest and longest paths
-        for (int i = 0; i < pathCount; i++) {
-            int pathLength = strlen(foundPaths[i]);
-            if (pathLength < shortestPathLength) {
-                shortestPathLength = pathLength;
-            }
-            if (pathLength > longestPathLength) {
-                longestPathLength = pathLength;
-            }
-        }
-
-        // Print shortest paths
-        printf("\nShortest path length: %d\n", shortestPathLength);
-        for (int i = 0; i < pathCount; i++) {
-            if (strlen(foundPaths[i]) == shortestPathLength) {
-                printf("Path %d: (%d, %d)", i + 1, startX, startY);
-                int tempx = startX;
-                int tempy = startY;
-                for (int j = 0; j < strlen(foundPaths[i]); j++) {
-                    switch(foundPaths[i][j]) {
-                        case 'D' :
-                            tempx++;
-                            break;
-                        case 'U' :
-                            tempx--;
-                            break;
-                        case 'L' :
-                            tempy--;
-                            break;
-                        case 'R' :
-                            tempy++;
-                            break;
-                    }
-                    printf("-> (%d, %d) ", tempx, tempy);
-                }
-                printf("\n");
-            }
-        }
-
-        // Print longest paths
-        printf("\nLongest path length: %d\n", longestPathLength);
-        for (int i = 0; i < pathCount; i++) {
-            if (strlen(foundPaths[i]) == longestPathLength) {
-                printf("Path %d: (%d, %d)", i + 1, startX, startY);
-                int tempx = startX;
-                int tempy = startY;
-                for (int j = 0; j < strlen(foundPaths[i]); j++) {
-                    switch(foundPaths[i][j]) {
-                        case 'D' :
-                            tempx++;
-                            break;
-                        case 'U' :
-                            tempx--;
-                            break;
-                        case 'L' :
-                            tempy--;
-                            break;
-                        case 'R' :
-                            tempy++;
-                            break;
-                    }
-                    printf("-> (%d, %d) ", tempx, tempy);
-                }
-                printf("\n");
-            }
-        }
+        findShortestPaths(startX, startY, endX, endY, row, col);
         endclk = clock();
         cpu_time_used = ((double) (endclk - startclk)) / CLOCKS_PER_SEC;
-        printf("Waktu yang diperlukan: %f",cpu_time_used);
+
+        printf("Shortest path traversal:\n");
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (shortestPathLengths[i][j].length == INF && (i != endX || j != endY)) {
+                    printf("#\t");
+                } else if (i == startX && j == startY) {
+                    printf("S\t");
+                } else if (i == endX && j == endY) {
+                    printf("E\t");
+                } else {
+                    printf("%d\t", shortestPathLengths[i][j].length);
+                }
+            }
+            printf("\n");
+        }
+        printShortestPath(endX, endY,startX, startY);
+        printf("Waktu yang diperlukan: %f\n", cpu_time_used);
     } else {
         printf("Start 'S' position not found.\n");
     }

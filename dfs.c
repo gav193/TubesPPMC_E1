@@ -97,11 +97,11 @@ void findPath(Maze* maze) {
         }
     }
     printf("Total number of unique paths from 'S' to 'E': %d\n", count);
-    int minlen = 999999;
-    int maxlen = 0;
-    int idmin = -1;
+    int minlen = 999999; // initialize with high value 
+    int maxlen = 0; // initialize with low value
+    int idmin = -1; 
     int idmax = -1;
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++) { // iterate to find max and min values with index
         if (strlen(ans[i]) > maxlen) {
             maxlen = strlen(ans[i]);
             idmax = i;
@@ -111,7 +111,7 @@ void findPath(Maze* maze) {
             idmin = i;
         }
     }
-    printf("Shortest path distance: %d\n", minlen);
+    printf("Shortest path distance: %d\n", minlen); // print out the shortest path with disatnce
     printf("Path : (%d, %d)", maze->start.col, maze->start.row);
     int tempx = maze->start.row;
     int tempy = maze->start.col;
@@ -128,7 +128,7 @@ void findPath(Maze* maze) {
         printf(" -> (%d,%d)", tempx, tempy);
     }
     printf("\n");
-    printf("Longest path distance: %d\n", maxlen);
+    printf("Longest path distance: %d\n", maxlen); // print out longest path with distance
     printf("Path : (%d, %d)", maze->start.col, maze->start.row);
     tempx = maze->start.row;
     tempy = maze->start.col;
@@ -150,7 +150,7 @@ int main() {
     Maze maze;
     FILE* file = fopen("Maze.txt", "r");
     char line[1024];
-    clock_t startclk, endclk;
+    clock_t startclk, endclk; // to check and analyze for time complexity
     double cpu_time_used;
 
     if (file == NULL) {

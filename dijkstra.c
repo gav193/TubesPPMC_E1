@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <time.h>
 
 #define MAX_SIZE 100
 #define INF INT_MAX
@@ -121,12 +122,18 @@ void printShortestPath(Maze *maze) {
 int main() {
     Maze maze;
     char file[100];
+    clock_t startclk, endclk;
+    double cpu_time_used;
 
     printf("Masukkan File Txt Struktur Maze : ");
     scanf("%s", file);
 
     readMaze(file, &maze);
+    startclk = clock();
     dijkstra(&maze);
     printShortestPath(&maze);
+    endclk = clock();
+    cpu_time_used = ((double) (endclk-startclk)) / CLOCKS_PER_SEC;
+    printf("Waktu yang diperlukan: %f", cpu_time_used);
     return 0;
 }

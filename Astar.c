@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
+#include <stdbool.h>
+#include <time.h>
 #define MAX_L 256
 #define abs(a) ((a > 0) ? (a) : (-a))
 
@@ -204,4 +206,43 @@ void tracePath(Cell** cellDetails, Pos start, Pos end, char map[MAX_L][MAX_L], i
         }
         printf("\n");
     }
+}
+
+#define MAX 256
+
+int main() {
+    char filename[MAX];
+    // input filename from user
+    printf("Enter file name: ");
+    scanf("%s", filename);
+
+    FILE *stream = fopen(filename, "r");
+    if (stream == NULL) {
+        printf("File not found!\n");
+        return 1;
+    }
+
+    int row = 0;
+    int col = 0;
+    char line[MAX];
+    char map[MAX][MAX];
+
+    while (fgets(line, sizeof(line), stream)) {
+        line[strcspn(line, "\n")] = '\0'; // Remove newline character
+        strcpy(map[row], line);
+        row++;
+        col = strlen(line); // Assuming all rows are of same length
+    }
+
+    fclose(stream);
+    
+    clock_t t; 
+    t = clock();
+    double time_taken; 
+    start_Astar(map,row,col);
+    t = clock() - t; 
+    time_taken = ((double)t)/CLOCKS_PER_SEC;
+    printf("Time Used : %lf sec", time_taken);
+
+    return 0;
 }

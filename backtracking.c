@@ -82,7 +82,7 @@ int main() {
 
     // Algorithm will always prioritize vertical movement
     int sol_counter = 0;
-    int finish = -1;
+    int finish = 0;
 
     // Start position in solution path
     sol[sol_counter++] = start;
@@ -150,6 +150,29 @@ int main() {
         printf("Time taken: %f\n", cpu_time_used);
     } else {
         printf("Failed to solve the maze\n");
+
+                printf("\n");
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (map2[i][j] == '#') {
+                    printf("█");
+                }else if (map2[i][j] == '.') {
+                    printf("░");
+                }else if (map2[i][j] == '+') {
+                    printf("+");
+                }
+                else{printf("%c", map2[i][j]);
+                }
+                if (j == col - 1) {
+                }
+            }
+            printf("\n");   
+        }
+        
+        printf("\n");
+        endclk=clock();
+        cpu_time_used = ((double) (endclk-startclk))/CLOCKS_PER_SEC;
+        printf("Time taken: %f\n", cpu_time_used);
     }
 
     return 0;

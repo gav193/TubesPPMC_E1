@@ -148,7 +148,10 @@ void findPath(Maze* maze) {
 }
 int main() {
     Maze maze;
-    FILE* file = fopen("Maze.txt", "r");
+    char filename[256];
+    printf("Masukkan nama file: ");
+    scanf("%s", filename);
+    FILE* file = fopen(filename, "r");
     char line[1024];
     clock_t startclk, endclk; // to check and analyze for time complexity
     double cpu_time_used;
@@ -157,17 +160,19 @@ int main() {
         printf("File maze.txt tidak ditemukan\n");
         return 1;
     }
-
+    fgets(line,sizeof(line),file);
+    int hitungKolom= strlen(line)-1;
     int hitungBaris = 0;
-    int hitungKolom = 0;
+    rewind(file);
 
     while (fgets(line, sizeof(line), file)) {
         char* newline = strchr(line, '\n');
         if (newline) {
             *newline = '\0';
         }
-        if (hitungBaris == 0) {
-            hitungKolom = strlen(line);
+        if (hirungKolom!= strlen(newline)) {
+            printf("Ditemukan baris dengan panjang tidak rata\n");
+            exit(1);
         }
         hitungBaris++;
     }

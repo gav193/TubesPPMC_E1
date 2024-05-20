@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <unistd.h> // for sleep function
+//#include <unistd.h> // for sleep function
+#include <time.h>
 
 #define MAX 256
 
@@ -68,15 +69,15 @@ void solveMaze(char maze[MAX][MAX], int rows, int cols, Pos start, Pos end) {
 
         maze[current.x][current.y] = '*';
 
-        system("clear");
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                printf("%c ", maze[i][j]);
-            }
-            printf("\n");
-        }
-        printf("\n");
-        sleep(1);
+        // system("clear");
+        // for (int i = 0; i < rows; i++) {
+        //     for (int j = 0; j < cols; j++) {
+        //         printf("%c ", maze[i][j]);
+        //     }
+        //     printf("\n");
+        // }
+        // printf("\n");
+        //sleep(1);
     }
 
     path[pathLength++] = current;
@@ -90,6 +91,8 @@ void solveMaze(char maze[MAX][MAX], int rows, int cols, Pos start, Pos end) {
 
 int main() {
     char filename[MAX];
+    clock_t startclk, endclk;
+    double cpu_time_used;
     // input filename from user
     printf("Enter file name: ");
     scanf("%s", filename);
@@ -133,8 +136,11 @@ int main() {
 
     curr.x = start.x;
     curr.y = start.y;
-
+    startclk = clock();
     solveMaze(maze, rows, cols, start, end);
+    endclk = clock();
+    cpu_time_used = ((double) (endclk - startclk)) / CLOCKS_PER_SEC;
+    printf("Time taken: %f seconds\n", cpu_time_used);
 
     return 0;
 }

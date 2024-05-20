@@ -132,20 +132,25 @@ int main() {
     }
 
     int row = 0;
-    int col = 0;
     char line[100];
     char maze[100][100];
 
-    while (fgets(line, sizeof(line), stream))
-    {
-        line[strcspn(line, "\n")] = '\0';
+    fgets(line, sizeof(line), stream);
+    int col = strlen(line) -1; // initialize column value as line length (-1 because of newline char)
+    rewind(stream);
+
+    while (fgets(line, sizeof(line), stream)) {
+        line[strcspn(line, "\n")] = '\0'; // Remove newline character
         strcpy(maze[row], line);
         row++;
-        col = strlen(line);
+        if (col != strlen(line)) {
+            printf("Found uneven row of line at %d\n, row);
+            exit(1);
+        }
     }
-
+    
     fclose(stream);
-
+    
     Point start, end;
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {

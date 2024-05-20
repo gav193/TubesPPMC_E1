@@ -30,6 +30,8 @@ void readMaze(const char *filename, Maze *maze) {
     maze->height = 0;
     char line[MAX_SIZE];
     int row = 0;
+    int firstLine = 1;  
+
     while (fgets(line, sizeof(line), file)) {
         int col = 0;
         while (line[col] != '\n' && line[col] != '\0') {
@@ -43,7 +45,16 @@ void readMaze(const char *filename, Maze *maze) {
             }
             col++;
         }
-        maze->width = col;
+
+        if (firstLine) {
+            maze->width = col;
+            firstLine = 0; 
+        } else if (col != maze->width) {
+            fprintf(stderr, "Kolom maze memiliki panjang yang berbeda!\n");
+            fclose(file);
+            exit(EXIT_FAILURE);
+        }
+
         row++;
     }
     maze->height = row;

@@ -1,3 +1,11 @@
+/** EL2208 Praktikum Pemecahan Masalah dengan C 2023/2024
+ *   Modul               : 9 - Tugas Besar
+ *   Hari dan Tanggal    : Senin, 20 Mei 2024
+ *   Nama (NIM)          : Frances Louisa Constantine (13222094)
+ *   Nama File           : BFS.c
+ *   Deskripsi           : mencari jalur dari input file txt dengan metode BFS
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

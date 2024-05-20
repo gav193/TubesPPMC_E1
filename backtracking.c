@@ -19,22 +19,26 @@ int main() {
     FILE *stream = fopen(filename, "r");
     if (stream == NULL) {
         printf("File not found!\n");
-        return 1;
+        return 0;
     }
-
+    
     int row = 0;
-    int col = 0;
     char line[MAX];
     char map[MAX][MAX];
 
-    // Read the file and store it in the map
+    fgets(line, sizeof(line), stream);
+    int col = strlen(line) -1; // initialize column value as line length (-1 because of newline char)
+    rewind(stream);
+
     while (fgets(line, sizeof(line), stream)) {
         line[strcspn(line, "\n")] = '\0'; // Remove newline character
         strcpy(map[row], line);
         row++;
-        col = strlen(line); // Assuming all rows are of same length
+        if (col != strlen(line)) {
+            printf("Found uneven row of line at %d\n, row);
+            exit(1);
+        }
     }
-
     fclose(stream);
     clock_t startclk,endclk;
     double cpu_time_used;

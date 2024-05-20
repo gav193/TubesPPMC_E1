@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define MAX 256
 
@@ -35,6 +36,9 @@ int main() {
     }
 
     fclose(stream);
+    clock_t startclk,endclk;
+    double cpu_time_used;
+    startclk =clock();
 
     // Clone map to solution matrix
     char map2[row][col];
@@ -137,6 +141,9 @@ int main() {
         }
 
         printf("\n");
+        endclk=clock();
+        cpu_time_used = ((double) (endclk-startclk))/CLOCKS_PER_SEC;
+        printf("Waktu yang diperlukan: %f", cpu_time_used);
     } else {
         printf("Failed to solve the maze\n");
     }

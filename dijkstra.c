@@ -1,3 +1,11 @@
+/** EL2208 Praktikum Pemecahan Masalah dengan C 2022/2023
+ *   Modul               : 9 - Tugas Besar
+ *   Hari dan Tanggal    : Senin, 20 Mei 2024
+ *   Nama (NIM)          : Nusaiba El Qonitat (13222095)
+ *   Nama File           : dijkstra.c
+ *   Deskripsi           : mencari jalur dari input file txt dengan metode Dijkstra
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>

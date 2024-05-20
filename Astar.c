@@ -1,3 +1,11 @@
+/** EL2208 Praktikum Pemecahan Masalah dengan C 2023/2024
+ *   Modul               : 9 - Tugas Besar
+ *   Hari dan Tanggal    : Senin, 20 Mei 2024
+ *   Nama (NIM)          : Rubi Naufal Tiandito (13222100)
+ *   Nama File           : Astar.c
+ *   Deskripsi           : mencari jalur dari input file txt dengan metode Astar
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
-#include <math.h>
 
 #define MAX 256
 #define INF 999
@@ -17,13 +16,12 @@ typedef struct {
 
 Cell shortestPathLengths[MAX][MAX];
 
-// Function to check if a cell is within the bounds of the maze
 bool isValid(int x, int y, int rows, int cols) {
     return (x >= 0 && x < rows && y >= 0 && y < cols);
 }
 
 void findShortestPaths(int startX, int startY, int endX, int endY, int rows, int cols) {
-    // Initialize shortest path lengths table
+    // initialize shortest path lengths table (memoization table)
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
             shortestPathLengths[i][j].length = INF;
@@ -31,18 +29,15 @@ void findShortestPaths(int startX, int startY, int endX, int endY, int rows, int
             shortestPathLengths[i][j].prevY = -1;
         }
     }
-    shortestPathLengths[startX][startY].length = 0; // Set shortest path length to start cell as 0
-
-    // Flag to track if any updates were made in the previous iteration
+    shortestPathLengths[startX][startY].length = 0; // set shortest path length to start cell as 0
     bool updated = true;
 
-    // Dynamic programming to find shortest path lengths
+    // dynamic programming to find shortest path lengths
     while (updated) {
-        updated = false; // Reset the flag for each iteration
-        // Traverse each cell in the maze
+        updated = false; // reset the flag for each iteration 
         for (int x = 0; x < rows; x++) {
             for (int y = 0; y < cols; y++) {
-                if (maze[x][y] != '#') { // Skip obstacles
+                if (maze[x][y] != '#') { // skip obstacles
                     int minNeighbor = shortestPathLengths[x][y].length;
                     int prevX = -1, prevY = -1;
                     // Consider all four neighbors
@@ -66,13 +61,13 @@ void findShortestPaths(int startX, int startY, int endX, int endY, int rows, int
                         prevX = x;
                         prevY = y + 1;
                     }
-                    // Update shortest path length if a shorter path is found
+                    // update shortest path length if a shorter path is found
                     if (minNeighbor < shortestPathLengths[x][y].length) {
                         shortestPathLengths[x][y].length = minNeighbor;
                         shortestPathLengths[x][y].prevX = prevX;
                         shortestPathLengths[x][y].prevY = prevY;
-                        updated = true; // Set flag to indicate an update was made
-                        if (x == endX && y == endY) {
+                        updated = true; // set flag to indicate an update was made
+                        if (x == endX && y == endY) { // found end point... ending traversal
                             return;
                         }
                     }
@@ -82,14 +77,14 @@ void findShortestPaths(int startX, int startY, int endX, int endY, int rows, int
     }
 }
 
-void printShortestPath(int endX, int endY, int startX, int startY) {
+void printShortestPath(int endX, int endY, int startX, int startY, int row, int col) {
     if (shortestPathLengths[endX][endY].length == INF) {
         printf("No path found from 'S' to 'E'.\n");
         return;
     }
     printf("Shortest path length from 'S' to 'E': %d\n", shortestPathLengths[endX][endY].length);
 
-    int path[MAX][2]; // To store the path coordinates
+    int path[MAX][2]; // to store the path coordinates (x,y)
     int length = 0;
     int x = endX, y = endY;
     while (x != -1 && y != -1) {
@@ -102,19 +97,47 @@ void printShortestPath(int endX, int endY, int startX, int startY) {
         length++;
     }
 
-    printf("Path : \n (%d, %d)", startY,startX);
+    printf("Path : \n(%d, %d)", startY, startX);
     for (int i = length - 2; i >= 0; i--) {
         printf(" -> (%d, %d)", path[i][1], path[i][0]);
     }
     printf("\n");
+
+    printf("Shortest path route : \n");
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            if (i == startX && j == startY) {
+                printf("S\t");
+            } else if (i == endX && j == endY) {
+                printf("E\t");
+            } else {
+                bool isPath = false;
+                for (int k = 0; k < length; k++) {
+                    if (i == path[k][0] && j == path[k][1]) {
+                        isPath = true;
+                        break;
+                    }
+                }
+                if (isPath) {
+                    printf("*\t");
+                } else {
+                    printf("%c\t", maze[i][j]);
+                }
+            }
+        }
+        printf("\n");
+    }
+
+    printf("\n");
 }
 
 int main() {
-    // Input filename from user
+    // input filename from user
     char filename[MAX];
+    clock_t startclk, endclk;
+    double cpu_time_used;
     printf("Enter file name: ");
     scanf("%s", filename);
-
     FILE *stream = fopen(filename, "r");
     if (stream == NULL) {
         printf("File not found!\n");
@@ -129,7 +152,7 @@ int main() {
     rewind(stream);
 
     while (fgets(line, sizeof(line), stream)) {
-        line[strcspn(line, "\n")] = '\0'; // Remove newline character
+        line[strcspn(line, "\n")] = '\0'; // remove newline character
         strcpy(maze[row], line);
         row++;
         if (col != strlen(line)) {
@@ -144,7 +167,7 @@ int main() {
         printf("%s\n", maze[i]);
     }
 
-    // Find the 'S' and 'E' position
+    // find the 'S' and 'E' position
     int startX = -1, startY = -1;
     int endX = -1, endY = -1;
     for (int i = 0; i < row; i++) {
@@ -164,37 +187,17 @@ int main() {
         printf("End point 'E' not found.\n");
         return 1;
     }
-
-    printf("Start position: (%d, %d)\n", startY, startX);
-
-    if (startX != -1) {
-        clock_t startclk, endclk;
-        double cpu_time_used;
-        startclk = clock();
-        findShortestPaths(startX, startY, endX, endY, row, col);
-        endclk = clock();
-        cpu_time_used = ((double) (endclk - startclk)) / CLOCKS_PER_SEC;
-
-        printf("Shortest path traversal:\n");
-        for (int i = 0; i < row; i++) {
-            for (int j = 0; j < col; j++) {
-                if (shortestPathLengths[i][j].length == INF && (i != endX || j != endY)) {
-                    printf("#\t");
-                } else if (i == startX && j == startY) {
-                    printf("S\t");
-                } else if (i == endX && j == endY) {
-                    printf("E\t");
-                } else {
-                    printf("%d\t", shortestPathLengths[i][j].length);
-                }
-            }
-            printf("\n");
-        }
-        printShortestPath(endX, endY,startX, startY);
-        printf("Waktu yang diperlukan: %f\n", cpu_time_used);
-    } else {
-        printf("Start 'S' position not found.\n");
+    if (startX == -1 || startY == -1) {
+        printf("Start point 'S' not found.\n");
+        return 1;
     }
 
+    printf("Start position: (%d, %d)\n", startY, startX);
+    startclk = clock();
+    findShortestPaths(startX, startY, endX, endY, row, col);
+    printShortestPath(endX, endY, startX, startY, row, col);
+    endclk = clock();
+    cpu_time_used = ((double) (endclk - startclk)) / CLOCKS_PER_SEC;
+    printf("Time taken: %f seconds\n", cpu_time_used);
     return 0;
 }

@@ -164,19 +164,15 @@ int main() {
     int hitungKolom= strlen(line)-1;
     int hitungBaris = 0;
     rewind(file);
-
     while (fgets(line, sizeof(line), file)) {
-        char* newline = strchr(line, '\n');
-        if (newline) {
-            *newline = '\0';
-        }
-        if (hirungKolom!= strlen(newline)) {
-            printf("Ditemukan baris dengan panjang tidak rata\n");
+        line[strcspn(line, "\n")] = '\0'; // Remove newline character
+        hitungBaris++;
+        if (hitungKolom != strlen(line)) {
+            printf("Found uneven row of line at %d\n", hitungBaris);
             exit(1);
         }
-        hitungBaris++;
     }
-
+    
     maze.rows = hitungBaris;
     maze.cols = hitungKolom;
 

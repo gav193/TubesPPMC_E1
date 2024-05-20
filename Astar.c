@@ -192,13 +192,15 @@ int A_star(char map[MAX_L][MAX_L], int ROW, int COL, Pos dest, Cell** cellDetail
 
 void tracePath(Cell** cellDetails, Pos start, Pos end, char map[MAX_L][MAX_L], int ROW, int COL) {
     Pos curr = end;
+    int count = 0;
     while (!(isSame(curr, start))) {
         map[curr.y_pos][curr.x_pos] = '*';
         curr = cellDetails[curr.y_pos][curr.x_pos].parent;
+        count++;
     }
     map[start.y_pos][start.x_pos] = 'S';
     map[end.y_pos][end.x_pos] = 'E';
-
+    printf("Shortest path length form 'S' to 'E' : %d\n", count);
     printf("Traced Path:\n");
     for (int i = 0; i < ROW; i++) {
         for (int j = 0; j < COL; j++) {
@@ -206,6 +208,7 @@ void tracePath(Cell** cellDetails, Pos start, Pos end, char map[MAX_L][MAX_L], i
         }
         printf("\n");
     }
+
 }
 
 #define MAX 256
@@ -221,7 +224,7 @@ int main() {
         printf("File not found!\n");
         return 1;
     }
-    
+
     int row = 0;
     char line[MAX];
     char map[MAX][MAX];
@@ -235,12 +238,10 @@ int main() {
         strcpy(map[row], line);
         row++;
         if (col != strlen(line)) {
-            printf("Found uneven row of line at %d\n, row);
+            printf("Found uneven row of line at %d\n", row);
             exit(1);
         }
     }
-    
-
     fclose(stream);
     
     clock_t t; 
@@ -249,7 +250,7 @@ int main() {
     start_Astar(map,row,col);
     t = clock() - t; 
     time_taken = ((double)t)/CLOCKS_PER_SEC;
-    printf("Time Used : %lf sec", time_taken);
+    printf("Time Taken : %lf sec", time_taken);
 
     return 0;
 }

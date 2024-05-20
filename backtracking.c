@@ -35,7 +35,7 @@ int main() {
         strcpy(map[row], line);
         row++;
         if (col != strlen(line)) {
-            printf("Found uneven row of line at %d\n, row);
+            printf("Found uneven row of line at %d\n", row);
             exit(1);
         }
     }
@@ -147,7 +147,7 @@ int main() {
         printf("\n");
         endclk=clock();
         cpu_time_used = ((double) (endclk-startclk))/CLOCKS_PER_SEC;
-        printf("Waktu yang diperlukan: %f", cpu_time_used);
+        printf("Time taken: %f\n", cpu_time_used);
     } else {
         printf("Failed to solve the maze\n");
     }

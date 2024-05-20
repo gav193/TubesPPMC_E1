@@ -30,7 +30,7 @@ int main() {
         strcpy(map[row], line);
         row++;
         if (col != strlen(line)) {
-            printf("Found uneven row of line at %d\n, row);
+            printf("Found uneven row of line at %d\n", row);
             exit(1);
         }
     }

@@ -1,3 +1,11 @@
+/** EL2208 Praktikum Pemecahan Masalah dengan C 2022/2023
+ *   Modul               : 9 - Tugas Besar
+ *   Hari dan Tanggal    : Senin, 20 Mei 2024
+ *   Nama (NIM)          : Roger Supriyanto (13222099)
+ *   Nama File           : dfs.c
+ *   Deskripsi           : mencari jalur dari input file txt dengan metode DFS
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>

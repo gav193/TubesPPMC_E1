@@ -1,3 +1,11 @@
+/** EL2208 Praktikum Pemecahan Masalah dengan C 2022/2023
+ *   Modul               : 9 - Tugas Besar
+ *   Hari dan Tanggal    : Senin, 20 Mei 2024
+ *   Nama (NIM)          : Pierre Gavin Tan (13222097)
+ *   Nama File           : dp.c
+ *   Deskripsi           : mencari jalur pada file txt dengan metode dynamic progrmaming
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

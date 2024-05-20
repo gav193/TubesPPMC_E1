@@ -44,15 +44,7 @@ int main() {
     double cpu_time_used;
     startclk =clock();
 
-    // Clone map to solution matrix
-    char map2[row][col];
-    for (int i = 0; i < row; i++) {
-        for (int j = 0; j < col; j++) {
-            map2[i][j] = map[i][j];
-        }
-    }
-
-    // Create solution matrix
+    // Create solution stack
     pos sol[MAX];
     for (int i = 0; i < MAX; i++) {
         sol[i].x = -1;
@@ -66,11 +58,11 @@ int main() {
 
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {
-            if (map2[i][j] == 'S') {
+            if (map[i][j] == 'S') {
                 start.x = j;
                 start.y = i;
             }
-            if (map2[i][j] == 'E') {
+            if (map[i][j] == 'E') {
                 end.x = j;
                 end.y = i;
             }
@@ -99,8 +91,8 @@ int main() {
         }
 
         // Mark current position as part of the path
-        if (map2[curr.y][curr.x] == '.'){
-            map2[curr.y][curr.x] = '+';
+        if (map[curr.y][curr.x] == '.'){
+            map[curr.y][curr.x] = '+';
         }
 
         // Try moving in all four directions
@@ -108,7 +100,7 @@ int main() {
 
         for (int i = 0; i < 4; i++) {
             pos next = { curr.x + directions[i].x, curr.y + directions[i].y };
-            if (next.x >= 0 && next.x < col && next.y >=0 && next.y < row && (map2[next.y][next.x] == '.' || map2[next.y][next.x] == 'E')) {
+            if (next.x >= 0 && next.x < col && next.y >=0 && next.y < row && (map[next.y][next.x] == '.' || map[next.y][next.x] == 'E')) {
                 sol[sol_counter++] = curr; // Push current position back to stack
                 sol[sol_counter++] = next; // Push next position to stack
                 break;
@@ -129,14 +121,14 @@ int main() {
         printf("\n");
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
-                if (map2[i][j] == '#') {
+                if (map[i][j] == '#') {
                     printf("█");
-                }else if (map2[i][j] == '.') {
+                }else if (map[i][j] == '.') {
                     printf("░");
-                }else if (map2[i][j] == '+') {
+                }else if (map[i][j] == '+') {
                     printf("+");
                 }
-                else{printf("%c", map2[i][j]);
+                else{printf("%c", map[i][j]);
                 }
                 if (j == col - 1) {
                 }
@@ -154,21 +146,21 @@ int main() {
                 printf("\n");
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
-                if (map2[i][j] == '#') {
+                if (map[i][j] == '#') {
                     printf("█");
-                }else if (map2[i][j] == '.') {
+                }else if (map[i][j] == '.') {
                     printf("░");
-                }else if (map2[i][j] == '+') {
+                }else if (map[i][j] == '+') {
                     printf("+");
                 }
-                else{printf("%c", map2[i][j]);
+                else{printf("%c", map[i][j]);
                 }
                 if (j == col - 1) {
                 }
             }
             printf("\n");   
         }
-        
+
         printf("\n");
         endclk=clock();
         cpu_time_used = ((double) (endclk-startclk))/CLOCKS_PER_SEC;

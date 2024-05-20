@@ -170,7 +170,7 @@ int main() {
         if (newline) {
             *newline = '\0';
         }
-        if (hirungKolom!= strlen(newline)) {
+        if (hitungKolom!= strlen(newline)) {
             printf("Ditemukan baris dengan panjang tidak rata\n");
             exit(1);
         }

@@ -104,15 +104,21 @@ int main() {
     }
 
     int rows = 0;
-    int cols = 0;
     char line[MAX];
     char maze[MAX][MAX];
 
+    fgets(line, sizeof(line), stream);
+    int cols = strlen(line) -1; // initialize column value as line length (-1 because of newline char)
+    rewind(stream);
+
     while (fgets(line, sizeof(line), stream)) {
         line[strcspn(line, "\n")] = '\0'; // Remove newline character
-        strcpy(maze[rows], line);
+        strcpy(maze[row], line);
         rows++;
-        cols = strlen(line); // Assuming all rows are of same length
+        if (cols != strlen(line)) {
+            printf("Found uneven row of line at %d\n, row);
+            exit(1);
+        }
     }
 
     fclose(stream);

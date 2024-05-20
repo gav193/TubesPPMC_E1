@@ -1,3 +1,11 @@
+/** EL2208 Praktikum Pemecahan Masalah dengan C 2022/2023
+ *   Modul               : 9 - Tugas Besar
+ *   Hari dan Tanggal    : Senin, 20 Mei 2024
+ *   Nama (NIM)          : Farhan Revandi Suhirman (13222096)
+ *   Nama File           : greedy.c
+ *   Deskripsi           : mencari jalur dari input file txt dengan metode greedy
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -15,3 +15,6 @@ Terdapat sebuah labirin yang terdiri dari sel-sel. Tujuan dari proyek ini adalah
 Dari setiap algoritma yang dirancang, kompleksitas, waktu, dan efisiensinya akan dibandingkan dan dianalisis.
 
 Jenis File Input : File berformat .txt
+
+File laporan dapat dibuka pada tautan : 
+https://itbdsti-my.sharepoint.com/:w:/g/personal/13222094_mahasiswa_itb_ac_id/EUf-60XugTNHrmHhCt_kiD4Bj2_tAOstINBBc5NSqxed3A?e=i2oMpv

@@ -221,21 +221,7 @@ int main() {
         printf("File not found!\n");
         return 1;
     }
-
-    int row = 0;
-    int col = 0;
-    char line[MAX];
-    char map[MAX][MAX];
-
-    while (fgets(line, sizeof(line), stream)) {
-        line[strcspn(line, "\n")] = '\0'; // Remove newline character
-        strcpy(map[row], line);
-        row++;
-        col = strlen(line); // Assuming all rows are of same length
-    }
-
-
-    /*
+    
     int row = 0;
     char line[MAX];
     char map[MAX][MAX];
@@ -253,7 +239,7 @@ int main() {
             exit(1);
         }
     }
-    */
+    
 
     fclose(stream);
     

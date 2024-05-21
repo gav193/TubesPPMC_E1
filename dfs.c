@@ -1,10 +1,3 @@
-/** EL2208 Praktikum Pemecahan Masalah dengan C 2023/2024
- *   Modul               : 9 - Tugas Besar
- *   Hari dan Tanggal    : Senin, 20 Mei 2024
- *   Nama (NIM)          : Roger Supriyanto (13222099)
- *   Nama File           : dfs.c
- *   Deskripsi           : mencari jalur dari input file txt dengan metode DFS
- */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -156,10 +149,7 @@ void findPath(Maze* maze) {
 }
 int main() {
     Maze maze;
-    char filename[256];
-    printf("Masukkan nama file: ");
-    scanf("%s", filename);
-    FILE* file = fopen(filename, "r");
+    FILE* file = fopen("Maze.txt", "r");
     char line[1024];
     clock_t startclk, endclk; // to check and analyze for time complexity
     double cpu_time_used;
@@ -168,19 +158,21 @@ int main() {
         printf("File maze.txt tidak ditemukan\n");
         return 1;
     }
-    fgets(line,sizeof(line),file);
-    int hitungKolom= strlen(line)-1;
+
     int hitungBaris = 0;
-    rewind(file);
+    int hitungKolom = 0;
+
     while (fgets(line, sizeof(line), file)) {
-        line[strcspn(line, "\n")] = '\0'; // Remove newline character
-        hitungBaris++;
-        if (hitungKolom != strlen(line)) {
-            printf("Found uneven row of line at %d\n", hitungBaris);
-            exit(1);
+        char* newline = strchr(line, '\n');
+        if (newline) {
+            *newline = '\0';
         }
+        if (hitungBaris == 0) {
+            hitungKolom = strlen(line);
+        }
+        hitungBaris++;
     }
-    
+
     maze.rows = hitungBaris;
     maze.cols = hitungKolom;
 
